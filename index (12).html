@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exam Clash Solver: Graph Coloring for Exam Timetables</title>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--ink:#16202e;--mute:#5d6b80;--line:#d9e1ee;--acc:#d1495b;--ok:#dff3e4;--bad:#fde3e6;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1520;--card:#18212f;--ink:#e8eef8;--mute:#9fb0c8;--line:#2a374b;--acc:#ff6f82;--ok:#1d3b2a;--bad:#43212a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1520;--card:#18212f;--ink:#e8eef8;--mute:#9fb0c8;--line:#2a374b;--acc:#ff6f82;--ok:#1d3b2a;--bad:#43212a;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:24px 20px 64px}
+h1{font-size:clamp(2.3rem,8vw,3.6rem);line-height:1.1;margin:.2em 0}
+h2{font-size:1.55rem;margin:0 0 .5em;color:var(--acc)}
+h3{margin:.8em 0 .3em}
+.tag{display:inline-block;background:var(--acc);color:#fff;padding:3px 12px;border-radius:999px;font:700 .75rem/1.6 ui-monospace,Menlo,monospace;letter-spacing:.08em}
+.sub{color:var(--mute);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;margin:18px 0}
+nav{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+nav a{font:600 .75rem ui-monospace,Menlo,monospace;color:var(--acc);border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 10px;text-decoration:none}
+.row{display:grid;grid-template-columns:1.2fr 1fr;gap:14px}
+@media (max-width:700px){.row{grid-template-columns:1fr}}
+svg{width:100%;height:auto;background:var(--bg);border:1px solid var(--line);border-radius:10px;touch-action:manipulation}
+svg [data-i]{cursor:pointer}
+button{font:600 .95rem/1 ui-monospace,Menlo,monospace;padding:9px 12px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--ink);cursor:pointer;margin:3px 3px 3px 0}
+button:hover{background:var(--acc);color:#fff;border-color:var(--acc)}
+input[type=number]{width:70px;padding:6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+.log{height:150px;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px;font:.78rem/1.5 ui-monospace,Menlo,monospace}
+.msg{margin:8px 0;padding:8px 10px;border-radius:8px;font-weight:600}
+.msg.ok{background:var(--ok)}.msg.bad{background:var(--bad)}
+.note{font-size:.9rem;color:var(--mute)}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-size:.98rem;margin-top:6px}
+td,th{border:1px solid var(--line);padding:6px 10px;text-align:left}
+th{color:var(--mute)}
+pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;font:.78rem/1.5 ui-monospace,Menlo,monospace}
+details{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:8px 0}
+summary{cursor:pointer;font-weight:700}
+.chip{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:5px;vertical-align:middle}
+ul,ol{padding-left:22px}
+.foot{position:relative;overflow:hidden;background:linear-gradient(135deg,#070d19,#1a2a4a);color:#fff;border-radius:16px;padding:44px 20px;text-align:center;margin-top:18px}
+.foot>*{position:relative;z-index:1}
+.foot .st{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:18px 0}
+.foot .st div{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:10px 16px;min-width:120px}
+.foot .st b{display:block;font:700 1.6rem/1.2 ui-monospace,Menlo,monospace;color:#ff8fa0}
+.foot ul{list-style:none;padding:0;max-width:580px;margin:12px auto 18px;text-align:left;color:#dbe5f5}
+.foot li{margin:6px 0}
+.hero{position:relative;overflow:hidden;min-height:320px;padding:44px 26px;border-radius:16px;background:linear-gradient(135deg,#070d19,#1a2a4a);color:#fff;margin-bottom:12px}
+.hero h1{color:#fff}.hero .sub{color:#c3d0e6;margin:0;font-size:1.2rem}
+.hero>*{position:relative;z-index:1}
+.hero>.fl{position:absolute;bottom:-50px;z-index:0;font:700 var(--s) ui-monospace,Menlo,monospace;color:#ff8fa0;opacity:.6;animation:rise var(--d) linear infinite;pointer-events:none;user-select:none}
+@keyframes rise{from{transform:translateY(0) rotate(0)}to{transform:translateY(-400px) rotate(var(--r));opacity:0}}
+@media (prefers-reduced-motion:reduce){.hero>.fl{animation:none;bottom:auto;top:30%}}
+</style>
+</head>
+<body>
+<main>
+<div class="hero" id="hero">
+<h1>Exam Clash Solver</h1>
+<p class="sub">Scheduling a university examination timetable with Graph Coloring and Backtracking. Build the clash graph, then watch the algorithm place every exam.</p></div>
+<div class="card"><h2>Cover page</h2><div class="tw"><table>
+<tr><th>Case study title</th><td>University Examination Timetable Scheduling (Exam Clash Solver)</td></tr>
+<tr><th>Student name</th><td>Kritika Huria</td></tr><tr><th>UID</th><td>25BAI10007</td></tr><tr><th>Class / Section</th><td>25BAI601</td></tr>
+<tr><th>Course</th><td>Data Structures and Algorithms-II (DSA-II)</td></tr>
+
+</table></div></div>
+<nav><a href="#s1">Abstract</a><a href="#s2">Problem</a><a href="#s3">Objectives</a><a href="#s4">Modelling</a><a href="#s5">Algorithm</a><a href="#s6">Worked example</a><a href="#demo">Live solver</a><a href="#s7">C++ and tests</a><a href="#s8">Complexity</a><a href="#s9">Results</a><a href="#s10">Conclusion</a><a href="#s11">References</a><a href="#viva">Viva prep</a></nav>
+
+<div class="card" id="s1"><h2>1. Abstract</h2><p>Every exam season a university must give each course an examination slot so that no student has two papers at the same time. This case study models the problem as graph coloring: courses are vertices, an edge joins two courses that share students, and a slot is a color. A backtracking algorithm assigns slots one course at a time and undoes choices that lead to a dead end, while a greedy first-fit method serves as a comparison. Both are implemented in C++ and tested on six cases, including edge cases. For an eight-course example both methods need three slots, and a crown-graph test shows greedy needing three slots where backtracking proves two are enough. An interactive solver lets the reader edit conflicts and watch the search.</p></div>
+
+<div class="card" id="s2"><h2>2. Introduction and problem statement</h2><p>A university offers many courses and students enrol in overlapping sets of them. If two courses share even one student, their exams cannot be held together. Fewer slots means a shorter exam period, so the university wants the smallest number of slots with no clash. Doing this by hand for hundreds of courses is slow and error-prone.</p><p><b>Problem statement:</b> given a set of courses and the pairs that conflict, assign each course a slot so that conflicting courses never share a slot, using as few slots as possible, and show how the choice of algorithm affects the result.</p></div>
+
+<div class="card" id="s3"><h2>3. Objectives</h2><ol><li>Represent courses and clashes as an undirected graph.</li><li>Solve slot assignment using Backtracking and compare with a greedy method.</li><li>Implement and test both in C++ on normal and edge cases.</li><li>Analyse time and space complexity and explain why the problem gets hard as courses grow.</li></ol></div>
+
+<div class="card" id="s4"><h2>4. Problem modelling</h2><ul><li><b>Input:</b> number of courses n, a list of conflicting pairs, and the number of slots k available.</li><li><b>Output:</b> a slot for every course (or a statement that k slots are not enough) and the minimum number of slots.</li><li><b>Representation:</b> an n × n adjacency matrix where adj[u][v] = 1 if courses u and v share students. A slot is a color number 0 to k−1, stored in an array col[].</li><li><b>Constraint:</b> if adj[u][v] = 1 then col[u] ≠ col[v].</li><li><b>Assumptions:</b> conflicts are known in advance, all exams last one slot, rooms and invigilators are unlimited, and there are no self-conflicts.</li></ul></div>
+
+<div class="card" id="s5"><h2>5. Algorithm explanation</h2><h3>5.1 Backtracking (exact)</h3><p>Take courses in order. For the current course try slots 0 to k−1. A slot is safe if no already-placed neighbour uses it. If safe, place the course and move to the next one; if the next course cannot be placed at all, undo (backtrack) and try the next slot. If every course is placed, we have a valid timetable. To find the minimum, try k = 1, 2, 3… and stop at the first k that works.</p><pre>solve(v, k):
+  if v == n: return true
+  for c = 0..k-1:
+    if safe(v, c):
+      col[v] = c
+      if solve(v+1, k): return true
+      col[v] = -1          // backtrack
+  return false</pre><h3>5.2 Greedy first-fit (comparison)</h3><p>Take courses in order and give each the smallest slot not used by its neighbours. It is fast and never backtracks, but it can use more slots than necessary because early choices are never revised.</p><pre>for v = 0..n-1:
+  c = 0
+  while some neighbour of v has slot c: c++
+  col[v] = c</pre><p><b>Why backtracking?</b> It tests only choices that are consistent so far and abandons a whole branch the moment it hits a clash, which is far less work than trying every possible assignment.</p></div>
+
+<div class="card" id="s6"><h2>6A. Worked example</h2><p>Eight courses: DSA-II, DBMS, COA, OS, Maths, AI, Network, Physics. Clashing pairs (shared students): DSA-II–DBMS, DSA-II–COA, DBMS–COA, COA–OS, OS–Maths, Maths–AI, AI–Network, Network–Physics, OS–AI, DBMS–Network, DSA-II–Physics.</p><p>DSA-II, DBMS and COA all clash with each other (a triangle), so they need three different slots and fewer than three is impossible. Placing the remaining courses in order never needs an undo, giving:</p><div class="tw"><table><tr><th>Slot 1</th><td>DSA-II, OS, Network</td></tr><tr><th>Slot 2</th><td>DBMS, Maths, Physics</td></tr><tr><th>Slot 3</th><td>COA, AI</td></tr></table></div><p class="note">The solver below loads this graph first. Try 2 slots and watch the search fail, then try 3.</p></div>
+
+<div class="card" id="demo"><h2>6B. Live solver</h2>
+<div class="row"><div><svg id="svg" viewBox="0 0 420 360"><g id="g"></g></svg><p class="note">Tap one course, then another, to add or remove a conflict.</p></div>
+<div>
+<label>Slots available <input type="number" id="k" min="1" max="8" value="3"></label>
+<div><button id="bp">Animate backtracking</button><button id="bi">Solve instantly</button><button id="bm">Find minimum</button><button id="bc">Clear</button></div>
+<div id="res" class="msg ok">Ready.</div>
+<div id="st" class="note"></div>
+<div class="log" id="log"></div></div></div>
+<div class="tw" id="tt2"></div></div>
+
+<div class="card" id="s7"><h2>7. C++ implementation and testing</h2>
+<details><summary>Show full C++ code</summary><pre id="code"></pre></details>
+<h3>Test cases (computed live in your browser)</h3>
+<div class="tw"><table><thead><tr><th>Test</th><th>Courses</th><th>Conflicts</th><th>Greedy slots</th><th>Backtracking minimum</th><th>Solver</th></tr></thead><tbody id="tb"></tbody></table></div>
+<p class="note">Test 1 is the worked example, Tests 3 and 4 are edge cases (no clashes, everyone clashes), and Test 6 is a crown graph where greedy is not optimal. These match the output of the compiled C++ program.</p>
+<details><summary>Sample console output (Test 1)</summary><pre>=== Test 1: University exam week ===
+Courses = 8, Conflicts = 11
+Greedy slots = 3, Minimum slots (backtracking) = 3
+Can 2 slots work? No
+Slot 1: DSA-II OS Network
+Slot 2: DBMS Maths Physics
+Slot 3: COA AI</pre></details></div>
+
+<div class="card" id="s8"><h2>8. Complexity analysis</h2><div class="tw"><table><tr><th>Method</th><th>Time</th><th>Space</th></tr>
+<tr><td>Greedy first-fit</td><td>O(n²)</td><td>O(n²) matrix + O(n)</td></tr>
+<tr><td>Backtracking for fixed k</td><td>O(kⁿ) worst case</td><td>O(n²) matrix + O(n) recursion</td></tr>
+<tr><td>Finding the minimum k</td><td>O(n · kⁿ) worst case</td><td>O(n²)</td></tr></table></div>
+<p>Backtracking can in the worst case try every one of the kⁿ assignments, but pruning at each clash cuts most branches, which is why the 8-course example finishes instantly. Graph coloring is NP-complete, so no known algorithm is fast for every large graph; this is why real universities use heuristics for hundreds of courses.</p>
+<p><b>Try it:</b> courses <input type="number" id="cn" value="8" min="1" max="200"> slots <input type="number" id="ck" value="3" min="1" max="20"> <b id="co"></b></p></div>
+
+<div class="card" id="s9"><h2>9. Results and discussion</h2><p>The solver found a valid three-slot timetable for the university example and proved two slots impossible because of the DSA-II, DBMS and COA triangle. With no conflicts one slot suffices, and with four mutually clashing courses four slots are required. Greedy matched the optimum except on the crown graph, where it used three slots against the optimal two.</p>
+<div class="tw"><table><tr><th>Point</th><th>Greedy</th><th>Backtracking</th></tr><tr><td>Result</td><td>Valid but maybe not minimum</td><td>Exact minimum</td></tr><tr><td>Speed</td><td>Very fast, O(n²)</td><td>Can be exponential</td></tr><tr><td>Crown graph (Test 6)</td><td>3 slots</td><td>2 slots</td></tr><tr><td>Best use</td><td>Large inputs, quick answer</td><td>Small inputs, optimal answer</td></tr></table></div></div>
+
+<div class="card" id="s10"><h2>10. Conclusion and limitations</h2><p>Modelling exam scheduling as graph coloring turns a messy timetable problem into a clear algorithmic one. Backtracking guarantees the minimum number of slots on small inputs, while greedy gives a quick answer that is usually, but not always, optimal.</p><p><b>Limitation:</b> the model ignores room capacity, invigilators and student fatigue, and backtracking becomes impractical for hundreds of courses. <b>Improvement:</b> order courses by number of conflicts (largest first) before coloring, or use the DSatur heuristic.</p></div>
+
+<div class="card" id="s11"><h2>11. References and acknowledgement</h2><ol><li>T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein, <i>Introduction to Algorithms</i>, MIT Press (backtracking and NP-complete problems).</li><li>S. Dasgupta, C. Papadimitriou and U. Vazirani, <i>Algorithms</i>, McGraw-Hill (graph coloring and backtracking).</li><li>DSA-II class notes and lectures on Graph Coloring and Backtracking.</li><li>GeeksforGeeks, for revising graph coloring.</li></ol>
+<p><b>AI acknowledgement:</b> Claude (Anthropic) assisted in drafting this report, this interactive page and the C++ program. The code was compiled and tested, and I can explain it in the viva.</p></div>
+
+<div class="card" id="viva"><h2>Viva preparation</h2>
+<details><summary>Why is this a graph coloring problem?</summary><p>Courses are vertices, shared students are edges, and slots are colors; two joined vertices must get different colors.</p></details>
+<details><summary>What does backtracking do when it hits a dead end?</summary><p>It un-assigns the last course and tries its next slot, abandoning the whole branch that cannot work.</p></details>
+<details><summary>Why can greedy use more slots than needed?</summary><p>It never revises early choices. In the crown graph its early picks force a third slot.</p></details>
+<details><summary>What is the minimum possible number of slots here?</summary><p>At least the size of the largest group of mutually clashing courses (a clique). The triangle forces three.</p></details>
+<details><summary>Why is the worst case O(kⁿ)?</summary><p>Each of n courses has k slot choices, so all assignments number kⁿ; pruning avoids most but not all of them.</p></details>
+<details><summary>Is a faster exact algorithm known?</summary><p>No. Graph coloring is NP-complete, so large cases rely on heuristics.</p></details></div>
+<div class="card" id="game"><h2>Play: colour the graph yourself</h2><p class="note">Tap an exam to cycle its slot colour. Goal: no two joined exams share a colour, using only 3 slots. Clashing lines turn red.</p><svg id="gs" viewBox="0 0 420 360"><g id="gg"></g></svg><div id="gm" class="msg ok"></div><button id="gr">Reset</button><button id="gh">Show solution</button></div>
+<div class="card" id="quiz"><h2>Test yourself: 5-question quiz</h2><p class="note">Tap an answer. Green is correct, red is your wrong pick.</p><div id="qz"></div><div id="qs" class="msg ok"></div><button id="qr">Restart quiz</button></div>
+<div id="foot" class="foot"><div style="font-size:1.6rem;font-weight:700">Thank you</div><p style="color:#c3d0e6">Exam Clash Solver · Kritika Huria · 25BAI10007 · DSA-II</p><div class="st"><div><b>3</b>slots for the exam week</div><div><b>11</b>conflicts modelled</div><div><b>6 / 6</b>tests passed</div><div><b>O(kⁿ)</b>backtracking worst case</div></div><ul><li>🔵 Courses are vertices, clashes are edges, slots are colours.</li><li>🔵 Backtracking gives the exact minimum; greedy is fast but can miss it.</li><li>🔵 Graph colouring is NP-complete, so very large timetables need heuristics.</li></ul><button id="up">Back to top ↑</button> <a href="#demo" style="color:#fff;margin-left:10px">Jump to the solver</a></div>
+</main>
+<script type="text/plain" id="src">
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+struct Graph {
+    int n; vector<vector<int>> adj;
+    Graph(int n) : n(n), adj(n, vector<int>(n, 0)) {}
+    void addEdge(int u, int v) { adj[u][v] = adj[v][u] = 1; }
+};
+
+// Can course v take slot c without clashing with placed neighbours?
+bool safe(const Graph& g, const vector<int>& col, int v, int c) {
+    for (int u = 0; u < g.n; u++)
+        if (g.adj[v][u] && col[u] == c) return false;
+    return true;
+}
+
+// Backtracking: place courses 0..n-1 using k slots
+bool backtrack(const Graph& g, vector<int>& col, int v, int k) {
+    if (v == g.n) return true;
+    for (int c = 0; c < k; c++) {
+        if (safe(g, col, v, c)) {
+            col[v] = c;
+            if (backtrack(g, col, v + 1, k)) return true;
+            col[v] = -1;                      // undo and try next slot
+        }
+    }
+    return false;
+}
+
+// Smallest k for which a valid timetable exists
+int minSlots(const Graph& g, vector<int>& col) {
+    for (int k = 1; k <= g.n; k++) {
+        col.assign(g.n, -1);
+        if (backtrack(g, col, 0, k)) return k;
+    }
+    return 0;
+}
+
+// Greedy first-fit (comparison)
+int greedy(const Graph& g) {
+    vector<int> col(g.n, -1); int used = 0;
+    for (int v = 0; v < g.n; v++) {
+        int c = 0;
+        while (!safe(g, col, v, c)) c++;
+        col[v] = c; used = max(used, c + 1);
+    }
+    return used;
+}
+
+void run(const string& name, const vector<string>& names,
+         const vector<pair<int,int>>& edges) {
+    Graph g(names.size());
+    for (auto& e : edges) g.addEdge(e.first, e.second);
+    vector<int> col, c2(g.n, -1);
+    int m = minSlots(g, col);
+    cout << "=== " << name << " ===\n";
+    cout << "Courses = " << g.n << ", Conflicts = " << edges.size() << "\n";
+    cout << "Greedy slots = " << greedy(g) << ", Minimum slots (backtracking) = " << m << "\n";
+    cout << "Can 2 slots work? " << (backtrack(g, c2, 0, 2) ? "Yes" : "No") << "\n";
+    for (int s = 0; s < m; s++) {
+        cout << "Slot " << s + 1 << ":";
+        for (int v = 0; v < g.n; v++) if (col[v] == s) cout << " " << names[v];
+        cout << "\n";
+    }
+    cout << "\n";
+}
+
+int main() {
+    run("Test 1: University exam week", {"DSA-II","DBMS","COA","OS","Maths","AI","Network","Physics"},
+        {{0,1},{0,2},{1,2},{2,3},{3,4},{4,5},{5,6},{6,7},{3,5},{1,6},{0,7}});
+    run("Test 2: Triangle", {"A","B","C"}, {{0,1},{1,2},{0,2}});
+    run("Test 3: No conflicts (edge case)", {"A","B","C","D"}, {});
+    run("Test 4: Everyone clashes (edge case)", {"A","B","C","D"},
+        {{0,1},{0,2},{0,3},{1,2},{1,3},{2,3}});
+    run("Test 5: Four-course cycle", {"A","B","C","D"}, {{0,1},{1,2},{2,3},{3,0}});
+    run("Test 6: Crown graph (greedy trap)", {"a1","b1","a2","b2","a3","b3"},
+        {{0,3},{0,5},{2,1},{2,5},{4,1},{4,3}});
+    return 0;
+}
+</script>
+<script>
+const $=id=>document.getElementById(id);
+const TESTS=[
+["1. University exam week",["DSA-II","DBMS","COA","OS","Maths","AI","Network","Physics"],[[0,1],[0,2],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[3,5],[1,6],[0,7]]],
+["2. Triangle",["A","B","C"],[[0,1],[1,2],[0,2]]],
+["3. No conflicts (edge)",["A","B","C","D"],[]],
+["4. Everyone clashes (edge)",["A","B","C","D"],[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]]],
+["5. Four-course cycle",["A","B","C","D"],[[0,1],[1,2],[2,3],[3,0]]],
+["6. Crown graph (greedy trap)",["a1","b1","a2","b2","a3","b3"],[[0,3],[0,5],[2,1],[2,5],[4,1],[4,3]]]];
+const COL=['#d1495b','#2e86ab','#3d9970','#c98a00','#8e5ea2','#17808a','#7a5c3a','#5c6bc0'];
+let names,n,adj,disp,sel=null,flash=-1,timer=null;
+const mk=t=>{const m=Array.from({length:t[1].length},()=>Array(t[1].length).fill(0));t[2].forEach(([u,v])=>m[u][v]=m[v][u]=1);return m};
+function solve(n,adj,k){const col=Array(n).fill(-1),steps=[];let backs=0;
+ const ok=(v,c)=>{for(let u=0;u<n;u++)if(adj[v][u]&&col[u]===c)return false;return true};
+ const bt=v=>{if(v===n)return true;
+  for(let c=0;c<k;c++){if(ok(v,c)){col[v]=c;steps.push([v,c]);if(bt(v+1))return true;col[v]=-1;steps.push([v,-1]);backs++}else steps.push([v,-2,c])}
+  return false};
+ const found=bt(0);return {found,col:col.slice(),steps,backs}}
+function greedyN(n,adj){const col=Array(n).fill(-1);let used=0;
+ for(let v=0;v<n;v++){let c=0;while([...Array(n).keys()].some(u=>adj[v][u]&&col[u]===c))c++;col[v]=c;used=Math.max(used,c+1)}return used}
+function minK(n,adj){for(let k=1;k<=n;k++)if(solve(n,adj,k).found)return k;return 0}
+function edges(){let e=0;for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)e+=adj[i][j];return e}
+function pos(i){const a=-Math.PI/2+2*Math.PI*i/n;return [210+140*Math.cos(a),180+140*Math.sin(a)]}
+function draw(){let h='';
+ for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)if(adj[i][j]){const[a,b]=pos(i),[c,d]=pos(j);h+='<line x1="'+a+'" y1="'+b+'" x2="'+c+'" y2="'+d+'" stroke="var(--mute)" stroke-width="2"/>'}
+ for(let i=0;i<n;i++){const[x,y]=pos(i),f=disp[i]>=0?COL[disp[i]]:'var(--card)',s=flash===i?'#e00':sel===i?'var(--acc)':'var(--ink)';
+  h+='<g data-i="'+i+'"><circle cx="'+x+'" cy="'+y+'" r="29" fill="'+f+'" stroke="'+s+'" stroke-width="'+(flash===i||sel===i?5:2.5)+'"/><text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" font-size="11" font-weight="700" fill="'+(disp[i]>=0?'#fff':'var(--ink)')+'">'+names[i]+'</text></g>'}
+ $('g').innerHTML=h}
+function stats(){$('st').textContent=n+' courses, '+edges()+' conflicts. Greedy needs '+greedyN(n,adj)+' slots; backtracking minimum is '+minK(n,adj)+' slots.'}
+function say(t){const l=$('log');l.insertAdjacentHTML('beforeend','<div>'+t+'</div>');l.scrollTop=l.scrollHeight}
+function stop(){clearInterval(timer);timer=null}
+function clear(){stop();disp=Array(n).fill(-1);flash=-1;sel=null;$('log').innerHTML='';$('tt2').innerHTML='';$('res').className='msg ok';$('res').textContent='Ready.';draw();stats()}
+function load(t){names=TESTS[t][1];n=names.length;adj=mk(TESTS[t]);$('k').value=Math.min(8,minK(n,adj)||1);clear()}
+function finish(r,k){flash=-1;if(r.found){disp=r.col.slice();$('res').className='msg ok';$('res').textContent='Valid timetable found with '+k+' slot(s). Backtracks: '+r.backs+'.';
+  let h='<table><tr><th>Slot</th><th>Exams</th></tr>';for(let s=0;s<k;s++){const L=names.filter((_,i)=>r.col[i]===s);if(L.length)h+='<tr><td><span class="chip" style="background:'+COL[s]+'"></span>Slot '+(s+1)+'</td><td>'+L.join(', ')+'</td></tr>'}$('tt2').innerHTML=h+'</table>'}
+ else{disp=Array(n).fill(-1);$('tt2').innerHTML='';$('res').className='msg bad';$('res').textContent='No valid timetable with '+k+' slot(s) after '+r.backs+' backtracks. This graph needs at least '+minK(n,adj)+' slots.'}
+ draw()}
+function play(){stop();const k=+$('k').value||1,r=solve(n,adj,k);disp=Array(n).fill(-1);$('log').innerHTML='';$('tt2').innerHTML='';let i=0;
+ timer=setInterval(()=>{if(i>=r.steps.length){stop();finish(r,k);return}
+  const s=r.steps[i++];flash=-1;
+  if(s[1]>=0){disp[s[0]]=s[1];say('Try '+names[s[0]]+' in Slot '+(s[1]+1)+': no clash, keep it.')}
+  else if(s[1]===-1){disp[s[0]]=-1;say('Dead end at '+names[s[0]]+': backtrack and un-assign it.')}
+  else{flash=s[0];say('Try '+names[s[0]]+' in Slot '+(s[2]+1)+': clashes with a neighbour.')}
+  draw()},350)}
+$('bp').onclick=play;
+$('bi').onclick=()=>{stop();const k=+$('k').value||1;$('log').innerHTML='';finish(solve(n,adj,k),k)};
+$('bm').onclick=()=>{$('k').value=minK(n,adj);$('bi').onclick()};
+$('bc').onclick=clear;
+$('g').onclick=e=>{const el=e.target.closest('[data-i]');if(!el)return;const i=+el.dataset.i;
+ if(sel===null)sel=i;else if(sel===i)sel=null;else{adj[sel][i]=adj[i][sel]=adj[i][sel]?0:1;sel=null;stop();disp=Array(n).fill(-1);$('tt2').innerHTML='';stats()}draw()};
+$('code').textContent=$('src').textContent.trim();
+TESTS.forEach((t,k)=>{const a=mk(t),e=t[2].length;
+ $('tb').insertAdjacentHTML('beforeend','<tr><td>'+t[0]+'</td><td>'+t[1].length+'</td><td>'+e+'</td><td>'+greedyN(t[1].length,a)+'</td><td>'+minK(t[1].length,a)+'</td><td><button data-k="'+k+'">Load</button></td></tr>')});
+$('tb').onclick=ev=>{const k=ev.target.dataset.k;if(k!==undefined){load(+k);$('demo').scrollIntoView()}};
+function calc(){const a=+$('cn').value||0,k=+$('ck').value||0,v=Math.pow(k,a);$('co').textContent='Worst case about '+(v<1e15?v.toLocaleString():v.toExponential(2))+' assignments for backtracking, versus about '+(a*a).toLocaleString()+' steps for greedy.'}
+$('cn').oninput=$('ck').oninput=calc;calc();
+(()=>{const h=$('hero'),c=document.createElement('canvas');c.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;z-index:0';h.insertBefore(c,h.firstChild);
+ const x=c.getContext('2d'),N=[];let W,H;
+ const size=()=>{W=c.width=h.clientWidth;H=c.height=h.clientHeight};size();addEventListener('resize',size);
+ for(let i=0;i<24;i++)N.push({x:Math.random()*W,y:Math.random()*H,vx:Math.random()-.5,vy:Math.random()-.5,c:COL[i%COL.length]});
+ const step=()=>{x.clearRect(0,0,W,H);
+  for(const a of N){a.x+=a.vx*.6;a.y+=a.vy*.6;if(a.x<0||a.x>W)a.vx*=-1;if(a.y<0||a.y>H)a.vy*=-1}
+  for(let i=0;i<N.length;i++)for(let j=i+1;j<N.length;j++){const a=N[i],b=N[j],d=Math.hypot(a.x-b.x,a.y-b.y);if(d<130){x.strokeStyle='rgba(255,255,255,'+(0.4*(1-d/130))+')';x.lineWidth=1.5;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}
+  for(const a of N){x.fillStyle=a.c;x.beginPath();x.arc(a.x,a.y,7,0,7);x.fill();x.strokeStyle='#fff';x.lineWidth=1.5;x.stroke()}
+  if(!matchMedia('(prefers-reduced-motion:reduce)').matches)requestAnimationFrame(step)};step()})();
+(()=>{const S=['{','}','[',']','(',')','<','>','0','1','2','3','5','8',';','==','&&','k','n'],h=$('hero');
+ for(let i=0;i<30;i++){const s=document.createElement('span');s.className='fl';s.textContent=S[i%S.length];
+  s.style.cssText='left:'+(Math.random()*96)+'%;--s:'+(16+Math.random()*28)+'px;--d:'+(7+Math.random()*8)+'s;--r:'+(Math.random()*80-40)+'deg;animation-delay:-'+(Math.random()*12)+'s';h.appendChild(s)}})();
+load(0);
+const Q=[["Which part of the graph represents an exam slot?",["A vertex","An edge","A colour","A weight"],2],["What does backtracking do at a dead end?",["Stops the program","Undoes the last choice and tries another","Restarts from the first course","Adds a new slot"],1],["Three mutually clashing courses need at least how many slots?",["1","2","3","4"],2],["Worst-case time of backtracking for n courses and k slots?",["O(n)","O(n²)","O(k^n)","O(log n)"],2],["Why can greedy first-fit be non-optimal?",["It is too slow","It never revises early choices","It ignores clashes","It uses recursion"],1]];
+let sc=0,ans=0;
+function quiz(){sc=0;ans=0;$('qs').textContent='Score: 0 / '+Q.length;
+ $('qz').innerHTML=Q.map((q,i)=>'<div style="margin:12px 0"><b>'+(i+1)+'. '+q[0]+'</b><div>'+q[1].map((o,j)=>'<button data-q="'+i+'" data-o="'+j+'">'+o+'</button>').join('')+'</div></div>').join('')}
+$('qz').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const i=+b.dataset.q,j=+b.dataset.o,all=[...$('qz').querySelectorAll('button[data-q="'+i+'"]')];
+ all.forEach(x=>x.disabled=true);all[Q[i][2]].style.cssText='background:#2e9e5b;color:#fff';
+ if(j===Q[i][2])sc++;else b.style.cssText='background:#d1495b;color:#fff';
+ ans++;$('qs').textContent='Score: '+sc+' / '+Q.length+(ans===Q.length?(sc===Q.length?'. Perfect! You are viva-ready.':sc>=3?'. Good, revise the ones you missed.':'. Revise sections 5 and 8 again.'):'')};
+$('qr').onclick=quiz;$('up').onclick=()=>scrollTo({top:0,behavior:'smooth'});quiz();
+const GN=TESTS[0][1],GA=mk(TESTS[0]);let gc=Array(8).fill(-1);
+const gp=i=>{const a=-Math.PI/2+2*Math.PI*i/8;return [210+140*Math.cos(a),180+140*Math.sin(a)]};
+function gdraw(){let h='',bad=0;
+ for(let i=0;i<8;i++)for(let j=i+1;j<8;j++)if(GA[i][j]){const k=gc[i]>=0&&gc[i]===gc[j];if(k)bad++;const[a,b]=gp(i),[c,d]=gp(j);h+='<line x1="'+a+'" y1="'+b+'" x2="'+c+'" y2="'+d+'" stroke="'+(k?'#e00':'var(--mute)')+'" stroke-width="'+(k?5:2)+'"/>'}
+ for(let i=0;i<8;i++){const[x,y]=gp(i);h+='<g data-g="'+i+'"><circle cx="'+x+'" cy="'+y+'" r="29" fill="'+(gc[i]>=0?COL[gc[i]]:'var(--card)')+'" stroke="var(--ink)" stroke-width="2.5"/><text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" font-size="11" font-weight="700" fill="'+(gc[i]>=0?'#fff':'var(--ink)')+'">'+GN[i]+'</text></g>'}
+ $('gg').innerHTML=h;const n2=gc.filter(c=>c>=0).length;
+ $('gm').className='msg '+(bad?'bad':'ok');
+ $('gm').textContent=bad?'Clashes: '+bad+'. Change one of the red-linked exams.':n2===8?'Perfect! Valid timetable with 3 slots. You just did what backtracking does.':'No clashes so far. Coloured '+n2+' of 8 exams.'}
+$('gs').onclick=e=>{const el=e.target.closest('[data-g]');if(!el)return;const i=+el.dataset.g;gc[i]=(gc[i]+1)%3;gdraw()};
+$('gr').onclick=()=>{gc=Array(8).fill(-1);gdraw()};
+$('gh').onclick=()=>{gc=solve(8,GA,3).col;gdraw()};
+(()=>{const h=$('foot'),c=document.createElement('canvas');c.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;z-index:0';h.insertBefore(c,h.firstChild);
+ const x=c.getContext('2d'),N=[];let W,H;
+ const size=()=>{W=c.width=h.clientWidth;H=c.height=h.clientHeight};size();addEventListener('resize',size);
+ for(let i=0;i<18;i++)N.push({x:Math.random()*W,y:Math.random()*H,vx:Math.random()-.5,vy:Math.random()-.5,c:COL[i%COL.length]});
+ const step=()=>{x.clearRect(0,0,W,H);
+  for(const a of N){a.x+=a.vx*.5;a.y+=a.vy*.5;if(a.x<0||a.x>W)a.vx*=-1;if(a.y<0||a.y>H)a.vy*=-1}
+  for(let i=0;i<N.length;i++)for(let j=i+1;j<N.length;j++){const a=N[i],b=N[j],d=Math.hypot(a.x-b.x,a.y-b.y);if(d<130){x.strokeStyle='rgba(255,255,255,'+(0.35*(1-d/130))+')';x.lineWidth=1.5;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}
+  for(const a of N){x.fillStyle=a.c;x.beginPath();x.arc(a.x,a.y,6,0,7);x.fill();x.strokeStyle='#fff';x.lineWidth=1.5;x.stroke()}
+  if(!matchMedia('(prefers-reduced-motion:reduce)').matches)requestAnimationFrame(step)};step()})();
+gdraw();
+</script>
+</body>
+</html>
